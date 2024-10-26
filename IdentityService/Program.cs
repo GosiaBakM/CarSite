@@ -1,4 +1,5 @@
 ﻿using IdentityService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
