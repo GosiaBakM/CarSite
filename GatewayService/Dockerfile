@@ -14,9 +14,9 @@ COPY Contracts/Contracts.csproj Contracts/
 
 RUN dotnet restore CarSite.sln
 
-COPY SearchService SearchService
+COPY GatewayService GatewayService
 COPY Contracts Contracts
-WORKDIR /app/SearchService
+WORKDIR /app/GatewayService
 RUN dotnet publish -c Release -o /app/out
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
@@ -25,4 +25,4 @@ WORKDIR /app
 
 COPY --from=build /app/out .
 
-ENTRYPOINT ["dotnet", "SearchService.dll"]
+ENTRYPOINT ["dotnet", "GatewayService.dll"]
