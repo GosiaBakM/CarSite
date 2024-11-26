@@ -1,5 +1,7 @@
 ﻿using IdentityService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Npgsql;
+using Polly;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -21,17 +23,12 @@ try
         .ConfigureServices()
         .ConfigurePipeline();
 
-    // this seeding is only for the template to bootstrap the DB and users.
-    // in production you will likely want a different approach.
-    //if (args.Contains("/seed"))
-    //{
-    //    Log.Information("Seeding database...");
-    //    SeedData.EnsureSeedData(app);
-    //    Log.Information("Done seeding database. Exiting.");
-    //    return;
-    //}
 
-    SeedData.EnsureSeedData(app);
+    var retryPolicy = Policy
+        .Handle<NpgsqlException>()
+        .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(10));
+
+    retryPolicy.ExecuteAndCapture(() => SeedData.EnsureSeedData(app));
 
     app.Run();
 }
