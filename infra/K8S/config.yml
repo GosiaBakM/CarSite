@@ -5,9 +5,6 @@ metadata:
 data:
     ASPNETCORE_URLS: http://+:82;http://+:7777
     RabbitMq__Host: rabbit-clusterip
-    RabbitMq__Username: rabbit
-    RabbitMq__Password: rabbitpw
-    ConnectionStrings__DefaultConnection: Server=postgres-clusterip;User Id=postgres;Password=postgrespw;Database=postgres
     IdentityServiceUrl: http://identity-clusterip
 ---
 apiVersion: v1
@@ -17,9 +14,6 @@ metadata:
 data:
    ASPNETCORE_URLS: http://+:80
    RabbitMq__Host: rabbit-clusterip
-   RabbitMq__Username: rabbit
-   RabbitMq__PAssword: rabbitpw
-   ConnectionStrings__MongoDbConnection: mongodb://root:mongopw@mongo-clusterip
    AuctionsServiceUrl: http://auction-clusterip
 ---
 apiVersion: v1
@@ -35,6 +29,4 @@ kind: ConfigMap
 metadata:
   name: identity-svc-config
 data:
-     ASPNETCORE_ENVIRONMENT: Docker
-     ASPNETCORE_URLS: http://+:80
-     ConnectionStrings__DefaultConnection: Server=postgres-clusterip;User Id=postgres;Password=postgrespw;Database=identity
+    ASPNETCORE_URLS: http://+:80

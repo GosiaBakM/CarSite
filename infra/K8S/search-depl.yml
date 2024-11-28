@@ -15,8 +15,28 @@ spec:
       - name: search-svc
         image: gosiabb/search-svc
         imagePullPolicy: Never
+        env:
+          - name: RabbitMq__Host
+            value: rabbit-clusterip
+          - name: RabbitMq__Username
+            valueFrom:
+              secretKeyRef:
+                name: search-secret
+                key: rabbitUn
+          - name: RabbitMq__Password
+            valueFrom:
+              secretKeyRef:
+                name: search-secret
+                key: rabbitPw
+          - name: ConnectionStrings__MongoDbConnection
+            valueFrom:
+              secretKeyRef:
+                name: search-secret
+                key: connString
+          - name: AuctionServiceUrl
+            value: http://auction-clusterip
         envFrom: 
-         - configMapRef:
+        - configMapRef:
             name: search-svc-config
         ports:
         - containerPort: 80
