@@ -23,9 +23,15 @@ builder.Services.AddMassTransit(x =>
 {
     x.AddConsumersFromNamespaceContaining<AuctionCreatedConsumer>();
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("search", false));
-    
+
     x.UsingRabbitMq((ctx, cfg) =>
     {
+        cfg.Host(builder.Configuration["RabbitMq:Host"], "/", host =>
+        {
+            host.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
+            host.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
+        });
+
         cfg.ReceiveEndpoint("search-auction-created", e =>
         {
             e.UseMessageRetry(r => r.Interval(5, 5));
@@ -53,17 +59,10 @@ app.MapControllers();
 
 app.Lifetime.ApplicationStarted.Register(async () =>
 {
-
-    try
-    {
-        await DbInitializer.Initialize(app);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex);
-}
-}
-);
+    await Policy.Handle<TimeoutException>()
+        .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(10))
+        .ExecuteAndCaptureAsync(async () => await DbInitializer.Initialize(app));
+});
 
 app.Run();
 

@@ -1,25 +1,28 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
+WORKDIR /app
 
-#FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-#WORKDIR /app
-#EXPOSE 80
-#EXPOSE 443
-#
-#FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-#WORKDIR /src
-#COPY ["SearchService/SearchService.csproj", "SearchService/"]
-#RUN dotnet restore "SearchService/SearchService.csproj"
-#COPY . .
-#WORKDIR "/src/SearchService"
-#RUN dotnet build "SearchService.csproj" -c Release -o /app/build
-#
-#FROM build AS publish
-#RUN dotnet publish "SearchService.csproj" -c Release -o /app/publish /p:UseAppHost=false
-#
-#FROM base AS final
-#WORKDIR /app
-#COPY --from=publish /app/publish .
-#ENTRYPOINT ["dotnet", "SearchService.dll"]
+EXPOSE 80
+
+COPY CarSite.sln .
+
+COPY AuctionService/AuctionService.csproj AuctionService/
+COPY IdentityService/IdentityService.csproj IdentityService/
+COPY SearchService/SearchService.csproj SearchService/
+COPY GatewayService/GatewayService.csproj GatewayService/
+COPY Contracts/Contracts.csproj Contracts/
+
+RUN dotnet restore CarSite.sln
+
+COPY SearchService SearchService
+COPY Contracts Contracts
+WORKDIR /app/SearchService
+RUN dotnet publish -c Release -o /app/out
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
+
+WORKDIR /app
+
+COPY --from=build /app/out .
+
+ENTRYPOINT ["dotnet", "SearchService.dll"]

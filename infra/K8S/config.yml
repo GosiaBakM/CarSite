@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auction-svc-config
+data:
+    ASPNETCORE_URLS: http://+:82;http://+:7777
+    RabbitMq__Host: rabbit-clusterip
+    IdentityServiceUrl: http://identity-clusterip
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: search-svc-config
+data:
+   ASPNETCORE_URLS: http://+:80
+   RabbitMq__Host: rabbit-clusterip
+   AuctionsServiceUrl: http://auction-clusterip
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-svc-config
+data:
+   ASPNETCORE_URLS: http://+:80
+   IdentityServiceUrl: http://identity-clusterip
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: identity-svc-config
+data:
+    ASPNETCORE_URLS: http://+:80

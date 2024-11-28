@@ -3,6 +3,9 @@
     "postgresql1": {
       "type": "postgresql",
       "connectionId": "postgres"
+    },
+    "apis1": {
+      "type": "apis"
     }
   }
 }
