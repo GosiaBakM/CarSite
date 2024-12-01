@@ -27,7 +27,7 @@ jobs:
           with:
             fetch-depth: 2
         - name: Checkout for changes in service path
-          run:
+          run: |
             if git diff --quiet HEAD^ HEAD -- ${{matrix.service.path}}; then
                 echo "No changes in ${{matrix.service.path}}. Skipping build"
                 echo "continue=false" >> $GITHUB_ENV
@@ -36,11 +36,9 @@ jobs:
                 echo "continue=true" >> $GITHUB_ENV
             fi
 
-
         - name: Set up docker buildx
           if: env.continue == 'true'
           uses: docker/setup-buildx-action@v2
-            
 
         - name: Login to Docker
           if: env.continue == 'true'
