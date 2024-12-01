@@ -11,8 +11,14 @@ jobs:
         strategy:
             matrix:
                 service: 
-                - name: 'gosiabb/auction-svc'
-                  path: 'AuctionService'
+                 - name: 'gosiabb/auction-svc'
+                   path: 'AuctionService'
+                 - name: 'gosiabb/search-svc'
+                   path: 'SearchService'
+                 - name: 'gosiabb/identity-svc'
+                   path: 'IdentityService'
+                 - name: 'gosiabb/gateway-svc'
+                   path: 'GatewayService'
         steps:
         - name: Checkout code
           uses: actions/checkout@v4
